@@ -6,3 +6,20 @@ body {
 .active {
   color: pink;
 }
+
+.videoRecordDiv {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+}
+
+.recordingButton {
+  margin-top: 10px;
+}
+
+.mainNavBar {
+  width: 100%;
+  display: flex;
+  flex-flow: row;
+  align-content: center;
+}

@@ -6,7 +6,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import reducers from './reducers';
 import Counter from './containers/counter';
 import Controls from './containers/controls';
-
+import webcam from './webcam';
 // import App from './components/app';
 
 import './style.scss';
@@ -19,14 +19,9 @@ const store = createStore(reducers, {}, compose(
 
 const Nav = (props) => {
   return (
-    <nav>
-      <ul>
-        <li><NavLink to="/test/id1">test id1</NavLink></li>
-        <li><NavLink to="/test/id2">test id2</NavLink></li>
-        <li><NavLink to="/" exact>Home</NavLink></li>
-        <li><NavLink to="/about">About</NavLink></li>
-      </ul>
-    </nav>
+    <div className="mainNavBar">
+      <div>roden test bench</div>
+    </div>
   );
 };
 
@@ -50,7 +45,7 @@ const App = (props) => {
     <Router>
       <div>
         <Nav />
-        <Route exact path="/" component={Welcome} />
+        <Route exact path="/" component={webcam} />
         <Route path="/about" component={About} />
         <Route exact path="/test/:id" component={Test} />
       </div>
@@ -62,4 +57,4 @@ ReactDOM.render(
   <Provider store={store}>
     <App />
   </Provider>
-, document.getElementById('main'));
+  , document.getElementById('main'));
