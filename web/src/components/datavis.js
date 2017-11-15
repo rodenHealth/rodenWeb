@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import firebase from 'firebase';
 import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom';
-import DB_CONFIG from '../config';
-import Chart from './chart';
+import { XYPlot, XAxis, YAxis, HorizontalGridLines, LineSeries } from 'react-vis';
+import * as firebasedb from '../firebase';
+import LineChart from './LineChart';
 import '../style.scss';
 
 // Used to generate video IDs
@@ -21,7 +22,8 @@ export default class datavis extends Component {
 
   constructor(props) {
     super(props);
-    this.firebaseApp = firebase.initializeApp(DB_CONFIG);
+
+
     // console.log(this.firebaseApp.getAllRecords());
     this.state = {
       video: [],
@@ -36,23 +38,24 @@ export default class datavis extends Component {
       sadness: [],
       surprise: [],
     };
-    // const videoRef = this.firebaseApp.database().ref('videos');
-    const videoRef = this.firebaseApp.database().ref(`videos/${this.props.match.params.id}`);
-
-    // TODO: Loop this until correct value is received
-    videoRef.on('value', (snapshot) => {
-      // debugger; // eslint-disable-line
-      this.setState({ video: snapshot.val() });
-      // debugger; // eslint-disable-line
-      this.getEmotionData();
-      this.getFrameData();
-      // debugger; // eslint-disable-line
-    });
   }
 
   componentDidMount() {
-    // Will open socket here?
-    console.log(this.props);
+    // const videoRef = this.firebaseApp.database().ref('videos');
+    firebasedb.handleDataForRecord(this.props.match.params.id, (key, snapshot) => {
+      this.setState({ video: snapshot.val() });
+      // debugger; // eslint-disable-line
+      this.getFrameData();
+      this.getEmotionData();
+    });
+
+    // const videoRef = firebase.database().ref(`videos/${this.props.match.params.id}`);
+    // videoRef.on('value', (snapshot) => {
+    //   // debugger; // eslint-disable-line
+    //   console.log('received data bitch');
+    //
+    //   // debugger; // eslint-disable-line
+    // });
   }
 
   getEmotionData() {
@@ -83,6 +86,7 @@ export default class datavis extends Component {
     this.setState({
       anger, contempt, disgust, fear, happiness, neutral, sadness, surprise,
     });
+    // debugger; // eslint-disable-line
   }
 
   getFrameData() {
@@ -98,60 +102,20 @@ export default class datavis extends Component {
     this.setState({ frames });
   }
 
+
   render() {
     // console.log(JSON.stringify(this.state.data));
     // this.getEmotionData('BernieNurseSpeech');
     return (
       <div>
-        <Chart
-          title="please work"
-          data={{
-            labels: this.state.frames.map((frame) => {
-              return frame.frameTime;
-            }),
-            datasets: [
-              {
-                title: 'Anger',
-                color: 'grey',
-                values: this.state.anger,
-              },
-              {
-                title: 'Contempt',
-                color: 'green',
-                values: this.state.anger,
-              },
-              {
-                title: 'Disgust',
-                color: 'gold',
-                values: this.state.disgust,
-              },
-              {
-                title: 'Fear',
-                color: 'lime',
-                values: this.state.fear,
-              },
-              {
-                title: 'Happiness',
-                color: 'maroon',
-                values: this.state.happiness,
-              },
-              {
-                title: 'Neutral',
-                color: 'olive',
-                values: this.state.neutral,
-              },
-              {
-                title: 'Sadness',
-                color: 'orange',
-                values: this.state.sadness,
-              },
-              {
-                title: 'Surprise',
-                color: 'pink',
-                values: this.state.surprise,
-              },
-            ],
-          }}
+        <LineChart anger={this.state.anger}
+          contempt={this.state.contempt}
+          disgust={this.state.disgust}
+          fear={this.state.fear}
+          happiness={this.state.happiness}
+          neutral={this.state.neutral}
+          sadness={this.state.sadness}
+          surprise={this.state.surprise}
         />
         <center>
           {/* --- making sure this worked --- */}
