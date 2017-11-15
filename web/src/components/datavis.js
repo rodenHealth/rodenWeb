@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import firebase from 'firebase';
 import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom';
 import DB_CONFIG from '../config';
+import line from './line';
 import '../style.scss';
 
 // Used to generate video IDs
@@ -10,13 +11,22 @@ const uuidv1 = require('uuid/v1');
 
 
 export default class datavis extends Component {
+
+  static convertFrameTime(key) {
+    const frame = key.slice(5);
+    const seconds = ((frame.length - 1) * 26) + (frame.charCodeAt(frame.length - 1) - 65);
+    const time = new Date(seconds * 1000).toISOString().substr(11, 8);
+    console.log(key + ' -> ' + time); // eslint-disable-line
+    return time;
+  }
+
   constructor(props) {
     super(props);
     this.firebaseApp = firebase.initializeApp(DB_CONFIG);
     // console.log(this.firebaseApp.getAllRecords());
     this.state = {
-      videos: [],
-      data: [],
+      video: [],
+      frames: [],
       videoId: '',
       anger: [],
       contempt: [],
@@ -27,20 +37,17 @@ export default class datavis extends Component {
       sadness: [],
       surprise: [],
     };
-    const videoRef = this.firebaseApp.database().ref('videos');
+    // const videoRef = this.firebaseApp.database().ref('videos');
+    const videoRef = this.firebaseApp.database().ref(`videos/${this.props.match.params.id}`);
 
     // TODO: Loop this until correct value is received
     videoRef.once('value').then((snapshot) => {
       // debugger; // eslint-disable-line
-      this.setState({ videos: snapshot.val() });
-      snapshot.forEach((data) => {
-        // Only grab our target record
-        if (data.key === this.props.match.params.id) {
-          console.log(data.key, data.val()); // Debug
-          this.setState({ data: data.val() });
-          this.getEmotionData();
-        }
-      });
+      this.setState({ video: snapshot.val() });
+      // debugger; // eslint-disable-line
+      this.getEmotionData();
+      this.getFrameData();
+      // debugger; // eslint-disable-line
     });
   }
 
@@ -49,9 +56,8 @@ export default class datavis extends Component {
     console.log(this.props);
   }
 
-
   getEmotionData() {
-    const video = this.state.data;
+    const video = this.state.video;
     const anger = [];
     const contempt = [];
     const disgust = [];
@@ -80,12 +86,26 @@ export default class datavis extends Component {
     });
   }
 
+  getFrameData() {
+    const video = this.state.video;
+    const frames = [];
+
+    for (const key in video) {
+      if (video[key].emotion !== undefined) {
+        video[key].frameTime = datavis.convertFrameTime(key);
+        frames.push(video[key]);
+      }
+    }
+    this.setState({ frames });
+  }
+
   render() {
     // console.log(JSON.stringify(this.state.data));
     // this.getEmotionData('BernieNurseSpeech');
     return (
       <div>
         <center>
+          {/* <line data={this.state.frames} /> */}
           {/* --- making sure this worked --- */}
           <h6>Anger: {this.state.anger[0]}</h6>
           <h6>Contempt: {this.state.contempt[0]}</h6>
