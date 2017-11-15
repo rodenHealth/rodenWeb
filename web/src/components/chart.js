@@ -11,8 +11,8 @@ class Chart extends Component {
       type = 'bar',
       height = 250,
       onSelect,
-      ...rest
     } = this.props;
+
     this.c = new Frappe({
       parent: this.chart,
       title,
@@ -20,8 +20,8 @@ class Chart extends Component {
       type,
       height,
       is_navigable: !!onSelect,
-      ...rest,
     });
+
     if (onSelect) {
       this.c.parent.addEventListener('data-select', onSelect);
     }
