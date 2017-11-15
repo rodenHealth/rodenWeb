@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import firebase from 'firebase';
 import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom';
 import DB_CONFIG from '../config';
-// import line from './line';
+import Chart from './chart';
 import '../style.scss';
 
 // Used to generate video IDs
@@ -104,8 +104,57 @@ export default class datavis extends Component {
     // this.getEmotionData('BernieNurseSpeech');
     return (
       <div>
+        <Chart
+          title="please work"
+          data={{
+            labels: this.state.frames.map((frame) => {
+              return frame.frameTime;
+            }),
+            datasets: [
+              {
+                title: 'Anger',
+                color: 'grey',
+                values: this.state.anger,
+              },
+              {
+                title: 'Contempt',
+                color: 'green',
+                values: this.state.anger,
+              },
+              {
+                title: 'Disgust',
+                color: 'gold',
+                values: this.state.disgust,
+              },
+              {
+                title: 'Fear',
+                color: 'lime',
+                values: this.state.fear,
+              },
+              {
+                title: 'Happiness',
+                color: 'maroon',
+                values: this.state.happiness,
+              },
+              {
+                title: 'Neutral',
+                color: 'olive',
+                values: this.state.neutral,
+              },
+              {
+                title: 'Sadness',
+                color: 'orange',
+                values: this.state.sadness,
+              },
+              {
+                title: 'Surprise',
+                color: 'pink',
+                values: this.state.surprise,
+              },
+            ],
+          }}
+        />
         <center>
-          {/* <line data={this.state.frames} /> */}
           {/* --- making sure this worked --- */}
           <h6>Anger: {this.state.anger[0]}</h6>
           <h6>Contempt: {this.state.contempt[0]}</h6>
