@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import firebase from 'firebase';
 import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom';
 import DB_CONFIG from '../config';
-import line from './line';
+// import line from './line';
 import '../style.scss';
 
 // Used to generate video IDs
