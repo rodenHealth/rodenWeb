@@ -1,0 +1,6 @@
+#!/bin/bash
+# ---- pak builder
+# ---- by tyler burnam
+
+rm -rf tmp/*
+rm .DS_Store
