@@ -108,7 +108,7 @@ class webcam extends React.Component {
     // this.state.socket.on('1', null);
 
 
-    // this.context.router.history.push(`/${videoID}`);
+    this.context.router.history.push(`/${videoID}`);
   }
 
   // Display 'record' or 'stop' button

@@ -11,7 +11,6 @@ const uuidv1 = require('uuid/v1');
 
 
 export default class datavis extends Component {
-
   static convertFrameTime(key) {
     const frame = key.slice(5);
     const seconds = ((frame.length - 1) * 26) + (frame.charCodeAt(frame.length - 1) - 65);
@@ -41,7 +40,7 @@ export default class datavis extends Component {
     const videoRef = this.firebaseApp.database().ref(`videos/${this.props.match.params.id}`);
 
     // TODO: Loop this until correct value is received
-    videoRef.once('value').then((snapshot) => {
+    videoRef.on('value', (snapshot) => {
       // debugger; // eslint-disable-line
       this.setState({ video: snapshot.val() });
       // debugger; // eslint-disable-line

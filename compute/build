@@ -1,0 +1,6 @@
+#!/bin/bash
+# ---- pak builder
+# ---- by tyler burnam
+
+node audio.js&
+klyng -n 25 app.js

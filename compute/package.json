@@ -5,19 +5,23 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "klyng -n 24 app.js"
+    "start": "./build"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/speech": "^0.11.0",
+    "@google-cloud/storage": "^1.4.0",
     "cognitive-services": "^0.6.0",
     "ffmpeg": "git://github.com/tburnam/ffmpeg2.git",
     "firebase-admin": "^5.5.0",
+    "fs": "0.0.1-security",
     "fs-extra": "^3.0.1",
     "klyng": "^1.0.5",
     "path": "^0.12.7",
     "request": "^2.83.0",
     "sleep": "^5.1.1",
-    "socket.io": "^2.0.4"
+    "socket.io": "^2.0.4",
+    "socket.io-client": "^2.0.4"
   }
 }
