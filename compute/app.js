@@ -3,9 +3,14 @@ const path = require('path');
 const ffmpeg = require('ffmpeg');
 const klyng = require('klyng');
 const io = require('socket.io')();
+const ioclient = require('socket.io-client');
 const sleep = require('sleep');
 const request = require('request');
+const build = require('./build.json');
 
+
+const PATH_TO_TMP_FOLDER = build.pathToTemp;
+const TOTAL_MANAGERS = 5;
 
 function frameObject() {
   this.path = "";
@@ -47,6 +52,7 @@ const P = {
   Communicator: 1,
   Firebase: 2,
   Video: 3,
+  Audio: 4,
 }
 
 const Status = {
@@ -56,7 +62,6 @@ const Status = {
 
 // Global constants
 const PORTNUMBER = 3000;
-const uploadsPath = './tmp/';
 
 // Entry point
 function main() {
@@ -66,6 +71,13 @@ function main() {
 
   // Manager
   if (rank == 0) {
+    // const child = spawn('node', ['audio.js'], {
+    //   detached: true,
+    //   stdio: 'ignore'
+    // });
+    //
+    // child.unref();
+    // const forked = fork('/Users/tylerburnam/dev/rodenWeb/compute/audio.js');
     managerProcess();
   }
   // Communicator
@@ -80,13 +92,32 @@ function main() {
   else if (rank == 3) {
     videoProcess();
   }
+  // Audio
+  else if (rank == 4) {
+    audioProcess();
+
+  }
   // Worker
   else {
-    workerProcess(rank)
-
-    // TODO: Work
-
+    workerProcess(rank);
     klyng.end();
+  }
+}
+
+// Audio
+function audioProcess()
+{
+  // Connect to speech processor
+  var socket = require('socket.io-client')('http://localhost:3001');
+  socket.on('connect', function(){});
+
+  while (1)
+  {
+    var data = klyng.recv({ from: P.Manager });
+    logger(P.Audio, data);
+
+    socket.emit('audio', data)
+    // audio.processSpeech(data, speech, client);
   }
 }
 
@@ -116,7 +147,12 @@ function workerProcess(rank)
     // Get data
     data = receiveData(rank);
 
-    // TODO: Process data
+    if (data == 1)
+    {
+      sleep.sleep(1);
+      continue;
+    }
+
     for (var i = 0; i < data.frames.length; i++)
     {
       sendFile(i, data, subKey, rank);
@@ -128,16 +164,17 @@ function workerProcess(rank)
 function managerProcess()
 {
   const size = klyng.size();
-  let frameQueue = [];
   var anotherIteration = false;
-  var id;
-  var totalFrames = 0;
-  var totalFailed = 0;
 
   while (1)
   {
+      let frameQueue = [];
+      var id;
+      var totalFrames = 0;
+      var totalFailed = 0;
       // Blocks on receive from communicator
-      const data = klyng.recv({ from: P.Communicator });
+      logger(P.Manager, "Waiting on start from communicator");
+      var data = klyng.recv({ from: P.Communicator });
       logger(0, `received data: ${JSON.stringify(data)}`);
 
       // Let everyone know
@@ -149,17 +186,22 @@ function managerProcess()
       // Tell video to process the video (frames / audio)
       klyng.send({ to: P.Video, data});
 
-      // Get total frames
-      totalFrames = klyng.recv({ from: P.Video})
+      // Get total frames and audio
+      totalFrames = klyng.recv({from: P.Video});
       logger(P.Manager, totalFrames);
 
+      // Notify audio worker
+      klyng.send({ to: P.Audio, data: id});
+
+      // Build frames
       frameQueue = buildFrames(data.id, totalFrames);
-      const framePerProcess = totalFrames / (size - 4);
+      const framePerProcess = totalFrames / (size - TOTAL_MANAGERS);
 
       var completeWorkers = 0;
       // While the queue is still getting processed
-      while (completeWorkers != (size - 4))
+      while (completeWorkers != (size - TOTAL_MANAGERS))
       {
+        logger(P.Manager, `Waiting for request from worker. ${frameQueue.length} records remain`)
         // Request from client
         var request = klyng.recv({});
 
@@ -202,13 +244,16 @@ function managerProcess()
       totalFrames = totalFrames - 2; // I don't know why it counts 2 extra
       logger(P.Manager, `Process of video ${id} complete.`);
       logger(P.Manager, `${totalFrames - totalFailed}/${totalFrames} frames processed`);
+
+      for (var x = TOTAL_MANAGERS; x < size; x++)
+      {
+        klyng.send({to: x, data: 1});
+      }
   }
 }
 
 // Listens to client
 function listenerProcess() {
-
-
 
   io.on('connection', (client) => {
     logger(1, `client ${client.handshake.headers.host} connected`);
@@ -220,7 +265,7 @@ function listenerProcess() {
       // notify manager
       klyng.send({ to: P.Manager, data });
 
-
+        //
         // var d = {"path":"expressions.mp4","id":"expressions"}
         // klyng.send({ to: P.Manager, data: d });
 
@@ -266,32 +311,33 @@ function firebaseProcess()
   }
 }
 
-
 // Get audio file
 function extractAudio(path, id) {
   try {
 
     // Download path
-    logger(1, `path: /Users/tylerburnam/Downloads/${path}`);
+    logger(1, `path: ${build.pathToDownloads}${path}`);
 
-    const process = new ffmpeg(`/Users/tylerburnam/Downloads/${path}`);
+    const process = new ffmpeg(`${build.pathToDownloads}${path}`);
 
     // Process video
     process.then((video) => {
 
         // Extract audio
-        video.fnExtractSoundToMP3(`${getUploadsPath(id)}/${id}.flac`,
+        video.fnExtractSoundToMP3(`${getPATH_TO_TMP_FOLDER(id)}/${id}.flac`,
           (error, file) => {
             if (!error) {
               logger(1, `audio file: ${file}`);
-              // speechToText(videoID);
+
+              // Tell manager the audio is complete
+              // klyng.send({ to: P.Manager, data: "complete" });
             } else {
               logger(1, error);
             }
           });
       },
       (err) => {
-        logger(1, `Error: ${uploadsPath}audio_${id}.flac`);
+        logger(1, `Error: ${PATH_TO_TMP_FOLDER}audio_${id}.flac`);
         logger(1, `Error: ${err}`);
       });
   } catch (e) {
@@ -314,12 +360,13 @@ function extractFrames(path, id) {
     process.then((video) => {
 
       // Extract JPGs from video
-      video.fnExtractFrameToJPG(getUploadsPath(id), {
+      console.log(getPATH_TO_TMP_FOLDER(id));
+      video.fnExtractFrameToJPG(getPATH_TO_TMP_FOLDER(id), {
         frame_rate: 1,
         file_name: `${id}%d.jpg`,
       }, (error, files) => {
         if (!error) {
-          fs.writeFile(`${getUploadsPath(id)}/emotion.txt`, '', () => {
+          fs.writeFile(`${getPATH_TO_TMP_FOLDER(id)}/emotion.txt`, '', () => {
             console.log('done');
           });
 
@@ -338,9 +385,9 @@ function extractFrames(path, id) {
   }
 }
 
-function getUploadsPath(id)
+function getPATH_TO_TMP_FOLDER(id)
 {
-  return `${uploadsPath}${id}/`
+  return `${PATH_TO_TMP_FOLDER}${id}/`
 }
 
 // Utility method to keep track of logging
@@ -368,7 +415,7 @@ function buildFrames(id, total)
 {
   var frames = []
 
-  var framePathBase = `${uploadsPath}${id}/${id}_`;
+  var framePathBase = `${PATH_TO_TMP_FOLDER}${id}/${id}_`;
   for (var i = 1; i < total - 1; i++)
   {
     var frame = new Frame();
@@ -432,7 +479,7 @@ function getSubscriptionKey(rank)
       "16488476e7ca4c51b93d64979b2603ef",
     ];
 
-  return subKeys[rank - 4];
+  return subKeys[rank - TOTAL_MANAGERS];
 }
 
 function getFrameName(frameNumber) {
@@ -448,6 +495,7 @@ function getFrameName(frameNumber) {
 
   return tag;
 }
+
 
 function sendFile(frameId, data, subKey, rank) {
   // Replace with any file name in /routes
@@ -477,7 +525,10 @@ function sendFile(frameId, data, subKey, rank) {
       }
       if (response.statusCode != 200) {
         console.log(`API call returned status code ${response.statusCode}: ${body}`);
-        sendBackData(rank, data.frames[frameId]);
+        if (data.frames !== undefined && data.frames[frameId] !== undefined)
+        {
+          sendBackData(rank, data.frames[frameId]);
+        }
         return;
       }
 
@@ -503,7 +554,7 @@ function sendFile(frameId, data, subKey, rank) {
 
         // TODO: Send this to firebase
         klyng.send({ to: P.Firebase, data: {id: videoID, status: 1, data: newObject} });
-        fs.appendFile(`${getUploadsPath(videoID)}emotion.txt`, `${JSON.stringify(newObject)}\n`, (err) => {});
+        fs.appendFile(`${getPATH_TO_TMP_FOLDER(videoID)}emotion.txt`, `${JSON.stringify(newObject)}\n`, (err) => {});
       }
     });
   });

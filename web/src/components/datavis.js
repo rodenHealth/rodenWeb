@@ -27,7 +27,7 @@ export default class datavis extends Component {
       sadness: [],
       surprise: [],
     };
-    const videoRef = this.firebaseApp.database().ref('videos');
+    const videoRef = this.firebaseApp.database().ref(`videos/${this.props.match.params.id}`);
 
     // TODO: Loop this until correct value is received
     videoRef.once('value').then((snapshot) => {
@@ -51,7 +51,7 @@ export default class datavis extends Component {
 
 
   getEmotionData() {
-    const video = this.state.data;
+    const video = this.state.video;
     const anger = [];
     const contempt = [];
     const disgust = [];
