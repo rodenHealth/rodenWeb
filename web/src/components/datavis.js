@@ -35,6 +35,7 @@ export default class datavis extends Component {
       neutral: [],
       sadness: [],
       surprise: [],
+      currentRecord: 0,
     };
   }
 
@@ -94,13 +95,18 @@ export default class datavis extends Component {
 
 
   render() {
+    console.log(`TEST: ${this.state.currentRecord}`);
     // console.log(JSON.stringify(this.state.data));
     // this.getEmotionData('BernieNurseSpeech');
     return (
       <div>
-        <LineChart anger={this.state.anger.map((val) => {
-          return val < 0.09 ? val : 0.09;
-        })}
+        <div className="frameTitle">
+          frame: {this.state.currentRecord}
+        </div>
+        <LineChart handleFrameChange={(x) => { this.setState({ currentRecord: x.x }); }}
+          anger={this.state.anger.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
           contempt={this.state.contempt.map((val) => {
             return val < 0.09 ? val : 0.09;
           })}
@@ -125,14 +131,14 @@ export default class datavis extends Component {
         />
         <center>
           {/* --- making sure this worked --- */}
-          <h6>Anger: {this.state.anger[0]}</h6>
-          <h6>Contempt: {this.state.contempt[0]}</h6>
-          <h6>Disgust: {this.state.disgust[0]}</h6>
-          <h6>Fear: {this.state.fear[0]}</h6>
-          <h6>Happiness: {this.state.happiness[0]}</h6>
-          <h6>Neutral: {this.state.neutral[0]}</h6>
-          <h6>Sadness: {this.state.sadness[0]}</h6>
-          <h6>Surprise: {this.state.surprise[0]}</h6>
+          <h6>Anger: {this.state.anger[this.state.currentRecord]}</h6>
+          <h6>Contempt: {this.state.contempt[this.state.currentRecord]}</h6>
+          <h6>Disgust: {this.state.disgust[this.state.currentRecord]}</h6>
+          <h6>Fear: {this.state.fear[this.state.currentRecord]}</h6>
+          <h6>Happiness: {this.state.happiness[this.state.currentRecord]}</h6>
+          <h6>Neutral: {this.state.neutral[this.state.currentRecord]}</h6>
+          <h6>Sadness: {this.state.sadness[this.state.currentRecord]}</h6>
+          <h6>Surprise: {this.state.surprise[this.state.currentRecord]}</h6>
         </center>
       </div>
     );
