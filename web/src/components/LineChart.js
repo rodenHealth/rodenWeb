@@ -46,7 +46,7 @@ export default class LineChart extends Component {
       <div>
         <center>
           <XYPlot
-            width={800}
+            width={1200}
             height={300}
           >
             <HorizontalGridLines />

@@ -23,8 +23,6 @@ export default class datavis extends Component {
   constructor(props) {
     super(props);
 
-
-    // console.log(this.firebaseApp.getAllRecords());
     this.state = {
       video: [],
       frames: [],
@@ -48,14 +46,6 @@ export default class datavis extends Component {
       this.getFrameData();
       this.getEmotionData();
     });
-
-    // const videoRef = firebase.database().ref(`videos/${this.props.match.params.id}`);
-    // videoRef.on('value', (snapshot) => {
-    //   // debugger; // eslint-disable-line
-    //   console.log('received data bitch');
-    //
-    //   // debugger; // eslint-disable-line
-    // });
   }
 
   getEmotionData() {
@@ -108,14 +98,30 @@ export default class datavis extends Component {
     // this.getEmotionData('BernieNurseSpeech');
     return (
       <div>
-        <LineChart anger={this.state.anger}
-          contempt={this.state.contempt}
-          disgust={this.state.disgust}
-          fear={this.state.fear}
-          happiness={this.state.happiness}
-          neutral={this.state.neutral}
-          sadness={this.state.sadness}
-          surprise={this.state.surprise}
+        <LineChart anger={this.state.anger.map((val) => {
+          return val < 0.09 ? val : 0.09;
+        })}
+          contempt={this.state.contempt.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          disgust={this.state.disgust.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          fear={this.state.fear.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          happiness={this.state.happiness.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          neutral={this.state.neutral.map((val) => {
+            return val / 18;
+          })}
+          sadness={this.state.sadness.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          surprise={this.state.surprise.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
         />
         <center>
           {/* --- making sure this worked --- */}
