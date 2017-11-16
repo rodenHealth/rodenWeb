@@ -37,6 +37,7 @@ export default class datavis extends Component {
       neutral: [],
       sadness: [],
       surprise: [],
+      currentRecord: 0,
     };
   }
 
@@ -104,29 +105,50 @@ export default class datavis extends Component {
 
 
   render() {
+    console.log(`TEST: ${this.state.currentRecord}`);
     // console.log(JSON.stringify(this.state.data));
     // this.getEmotionData('BernieNurseSpeech');
     return (
       <div>
-        <LineChart anger={this.state.anger}
-          contempt={this.state.contempt}
-          disgust={this.state.disgust}
-          fear={this.state.fear}
-          happiness={this.state.happiness}
-          neutral={this.state.neutral}
-          sadness={this.state.sadness}
-          surprise={this.state.surprise}
+        <div className="frameTitle">
+          frame: {this.state.currentRecord}
+        </div>
+        <LineChart handleFrameChange={(x) => { this.setState({ currentRecord: x.x }); }}
+          anger={this.state.anger.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          contempt={this.state.contempt.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          disgust={this.state.disgust.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          fear={this.state.fear.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          happiness={this.state.happiness.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          neutral={this.state.neutral.map((val) => {
+            return val / 18;
+          })}
+          sadness={this.state.sadness.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          surprise={this.state.surprise.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
         />
         <center>
           {/* --- making sure this worked --- */}
-          <h6>Anger: {this.state.anger[0]}</h6>
-          <h6>Contempt: {this.state.contempt[0]}</h6>
-          <h6>Disgust: {this.state.disgust[0]}</h6>
-          <h6>Fear: {this.state.fear[0]}</h6>
-          <h6>Happiness: {this.state.happiness[0]}</h6>
-          <h6>Neutral: {this.state.neutral[0]}</h6>
-          <h6>Sadness: {this.state.sadness[0]}</h6>
-          <h6>Surprise: {this.state.surprise[0]}</h6>
+          <h6>Anger: {this.state.anger[this.state.currentRecord]}</h6>
+          <h6>Contempt: {this.state.contempt[this.state.currentRecord]}</h6>
+          <h6>Disgust: {this.state.disgust[this.state.currentRecord]}</h6>
+          <h6>Fear: {this.state.fear[this.state.currentRecord]}</h6>
+          <h6>Happiness: {this.state.happiness[this.state.currentRecord]}</h6>
+          <h6>Neutral: {this.state.neutral[this.state.currentRecord]}</h6>
+          <h6>Sadness: {this.state.sadness[this.state.currentRecord]}</h6>
+          <h6>Surprise: {this.state.surprise[this.state.currentRecord]}</h6>
         </center>
       </div>
     );
