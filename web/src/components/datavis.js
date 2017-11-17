@@ -5,6 +5,9 @@ import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom';
 import { XYPlot, XAxis, YAxis, HorizontalGridLines, LineSeries } from 'react-vis';
 import * as firebasedb from '../firebase';
 import LineChart from './LineChart';
+import BarChart from './BarChart';
+import LineFloodChart from './LineFloodChart';
+import RadarChart from './RadarChart';
 import '../style.scss';
 
 // Used to generate video IDs
@@ -129,8 +132,63 @@ export default class datavis extends Component {
             return val < 0.09 ? val : 0.09;
           })}
         />
+        <LineFloodChart handleFrameChange={(x) => { this.setState({ currentRecord: x.x }); }}
+          frames={this.state.frames}
+          anger={this.state.anger.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          contempt={this.state.contempt.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          disgust={this.state.disgust.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          fear={this.state.fear.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          happiness={this.state.happiness.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          neutral={this.state.neutral.map((val) => {
+            return val * 0.03;
+          })}
+          sadness={this.state.sadness.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          surprise={this.state.surprise.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+        />
+        <RadarChart handleFrameChange={(x) => { this.setState({ currentRecord: x.x }); }}
+          frames={this.state.frames}
+          anger={this.state.anger.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          contempt={this.state.contempt.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          disgust={this.state.disgust.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          fear={this.state.fear.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          happiness={this.state.happiness.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          neutral={this.state.neutral.map((val) => {
+            return val * 0.03;
+          })}
+          sadness={this.state.sadness.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+          surprise={this.state.surprise.map((val) => {
+            return val < 0.09 ? val : 0.09;
+          })}
+        />
         <center>
           {/* --- making sure this worked --- */}
+          <BarChart frame={this.state.frames[this.state.currentRecord]} />
           <h6>Anger: {this.state.anger[this.state.currentRecord]}</h6>
           <h6>Contempt: {this.state.contempt[this.state.currentRecord]}</h6>
           <h6>Disgust: {this.state.disgust[this.state.currentRecord]}</h6>
