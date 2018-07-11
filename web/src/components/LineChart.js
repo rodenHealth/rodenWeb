@@ -1,17 +1,9 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { XYPlot, XAxis, YAxis, HorizontalGridLines, LineSeries, Hint } from 'react-vis';
+import { XYPlot, XAxis, YAxis, HorizontalGridLines, LineSeries, Hint, DiscreteColorLegend, Crosshair } from 'react-vis';
 import '../style.scss';
 
 export default class LineChart extends Component {
-  static convertFrameTime(key) {
-    const frame = key.slice(5);
-    const seconds = ((frame.length - 1) * 26) + (frame.charCodeAt(frame.length - 1) - 65);
-    const time = new Date(seconds * 1000).toISOString().substr(11, 8);
-    console.log(key + ' -> ' + time); // eslint-disable-line
-    return time;
-  }
-
   constructor(props) {
     super(props);
 
@@ -19,64 +11,118 @@ export default class LineChart extends Component {
     // console.log(this.firebaseApp.getAllRecords());
     this.state = {
       video: [],
+      anger: [],
+      contempt: [],
+      disgust: [],
+      fear: [],
+      happiness: [],
+      neutral: [],
+      sadness: [],
+      surprise: [],
     };
 
     this.renderEmotionLines = this.renderEmotionLines.bind(this);
+    this.convertFrameTime = this.convertFrameTime.bind(this);
   }
 
+  convertFrameTime(seconds) {
+    // debugger; // eslint-disable-line
+    const time = new Date(seconds * 1000).toISOString().substr(14, 8);
+
+    return time;
+  }
 
   renderEmotionLines(emotionArray) {
     const data = [];
     for (let i = 0; i < emotionArray.length; i++) {
       const newObject = {
         x: i,
-        y: emotionArray[i] * 1000,
+        y: emotionArray[i],
       };
       data.push(newObject);
     }
 
-    console.log(data);
     return data;
   }
 
   render() {
+    const LABELS = [
+      'Anger',
+      'Contempt',
+      'Disgust',
+      'Fear',
+      'Happiness',
+      'Neutral',
+      'Surprise',
+      'Sadness',
+    ];
+
+    const anger = this.renderEmotionLines(this.props.anger);
+    const contempt = this.renderEmotionLines(this.props.contempt);
+    const disgust = this.renderEmotionLines(this.props.disgust);
+    const fear = this.renderEmotionLines(this.props.fear);
+    const happiness = this.renderEmotionLines(this.props.happiness);
+    const neutral = this.renderEmotionLines(this.props.neutral);
+    const sadness = this.renderEmotionLines(this.props.sadness);
+    const surprise = this.renderEmotionLines(this.props.surprise);
+
+    const generateXAxis = (size) => {
+    	const result = [];
+    	for (let x = 0; x < size; x++) {
+    		result.push(x);
+    	}
+
+    	return result;
+    };
+    // debugger // eslint-disable-line
+    const totalFrames = generateXAxis(anger.length);
+    console.log(totalFrames);
+
     // console.log(JSON.stringify(this.state.data));
     // this.getEmotionData('BernieNurseSpeech');
     return (
       <div>
         <center>
           <XYPlot
-            width={800}
+            width={1200}
             height={300}
+            yPadding={10}
+            xPadding={1}
           >
             <HorizontalGridLines />
             <LineSeries
-              data={this.renderEmotionLines(this.props.anger)}
+              data={anger}
+              onNearestX={this.props.handleFrameChange}
             />
             <LineSeries
-              data={this.renderEmotionLines(this.props.contempt)}
+              data={contempt}
             />
             <LineSeries
-              data={this.renderEmotionLines(this.props.disgust)}
+              data={disgust}
             />
             <LineSeries
-              data={this.renderEmotionLines(this.props.fear)}
+              data={fear}
             />
             <LineSeries
-              data={this.renderEmotionLines(this.props.happiness)}
+              data={happiness}
             />
             <LineSeries
-              data={this.renderEmotionLines(this.props.neutral)}
+              data={neutral}
             />
             <LineSeries
-              data={this.renderEmotionLines(this.props.surprise)}
+              data={surprise}
             />
             <LineSeries
-              data={this.renderEmotionLines(this.props.sadness)}
+              data={sadness}
             />
-            <XAxis title="Frames" />
-            <YAxis title="Emotions" />
+            <XAxis title="Frame time" tickFormat={v => `${this.convertFrameTime(v)}`} tickValues={totalFrames} />
+            <YAxis title="Emotions" tickFormat={v => `${v / 100}`} />
           </XYPlot>
+          <DiscreteColorLegend
+            orientation="horizontal"
+            width={500}
+            items={LABELS}
+          />
         </center>
       </div>
     );

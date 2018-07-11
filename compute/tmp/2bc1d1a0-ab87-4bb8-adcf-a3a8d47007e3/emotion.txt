@@ -1,0 +1,1 @@
+{"frameE":{"emotion":{"anger":0.000328181457,"contempt":0.0046115634,"disgust":0.008049484,"fear":0.004485326,"happiness":0.000448675273,"neutral":0.862789333,"sadness":0.0448738635,"surprise":0.07441359},"faceRect":{"height":190,"left":190,"top":126,"width":190}}}

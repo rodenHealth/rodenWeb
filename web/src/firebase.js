@@ -1,12 +1,12 @@
 const firebase = require('firebase');
 
 const config = {
-  apiKey: 'AIzaSyDvnbAxj7NWOyZua8V9b91lRgCy7wyVVjc',
-  authDomain: 'rodenweb.firebaseapp.com',
-  databaseURL: 'https://rodenweb.firebaseio.com',
-  projectId: 'rodenweb',
-  storageBucket: 'rodenweb.appspot.com',
-  messagingSenderId: '895970700996',
+  apiKey: 'AIzaSyCkTdVvkHkp6drWj-r0tIOzRq2JKT27bOs',
+  authDomain: 'roden-864e2.firebaseapp.com',
+  databaseURL: 'https://roden-864e2.firebaseio.com',
+  projectId: 'roden-864e2',
+  storageBucket: 'roden-864e2.appspot.com',
+  messagingSenderId: '250808707384',
 };
 firebase.initializeApp(config);
 

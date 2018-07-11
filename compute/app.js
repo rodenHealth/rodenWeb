@@ -1,3 +1,5 @@
+// TOOD: Better build steps - need path to ffmpeg
+
 const fs = require('fs');
 const path = require('path');
 const ffmpeg = require('ffmpeg');
@@ -172,9 +174,11 @@ function managerProcess()
       var id;
       var totalFrames = 0;
       var totalFailed = 0;
+
       // Blocks on receive from communicator
       logger(P.Manager, "Waiting on start from communicator");
       var data = klyng.recv({ from: P.Communicator });
+      console.log("--->");
       logger(0, `received data: ${JSON.stringify(data)}`);
 
       // Let everyone know
@@ -286,11 +290,11 @@ function firebaseProcess()
 {
   // Build firebase
   const admin = require("firebase-admin");
-  var serviceAccount = require("./bin/rodenweb-firebase-adminsdk-r1dak-04935483b0.json");
+  var serviceAccount = require("./bin/roden-864e2-firebase-adminsdk-8sagx-0322824252.json");
 
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://rodenweb.firebaseio.com"
+    databaseURL: "https://roden-864e2.firebaseio.com"
   });
   var db = admin.database();
 

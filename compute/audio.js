@@ -1,5 +1,7 @@
 // Imports the Google Cloud client library
 
+// BUILD STEP
+// export GOOGLE_APPLICATION_CREDENTIALS="./bin/roden-864e2-firebase-adminsdk-8sagx-0322824252.json"
 
 // The name of the audio file to transcribe
 // const filePath = '/Users/tylerburnam/dev/rodenWeb/compute/tmp/1446e323-49a1-47e2-8336-4e13c38f3b6d/1446e323-49a1-47e2-8336-4e13c38f3b6d.flac';
@@ -10,7 +12,7 @@ const PORTNUMBER = 3001;
 
 
 // const audio = require('./audio.js');
-const projectId = 'rodenweb';
+const projectId = 'roden-864e2';
 const client = new speech.SpeechClient({
   projectId: projectId,
 });
@@ -21,11 +23,11 @@ function logger(message)
 }
 
 const admin = require("firebase-admin");
-var serviceAccount = require("./bin/rodenweb-firebase-adminsdk-r1dak-04935483b0.json");
+var serviceAccount = require("./bin/roden-864e2-firebase-adminsdk-8sagx-0322824252.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://rodenweb.firebaseio.com"
+  databaseURL: "https://roden-864e2.firebaseio.com"
 });
 var db = admin.database();
 
