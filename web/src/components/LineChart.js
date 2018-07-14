@@ -123,6 +123,7 @@ export default class LineChart extends Component {
             width={500}
             items={LABELS}
           />
+
         </center>
       </div>
     );

@@ -10,10 +10,12 @@ const sleep = require('sleep');
 const request = require('request');
 const build = require('./build.json');
 
-
+// Global constants
+const PORTNUMBER = 3000;
 const PATH_TO_TMP_FOLDER = build.pathToTemp;
 const TOTAL_MANAGERS = 5;
 
+// Object construction
 function frameObject() {
   this.path = "";
   this.attempts = 0;
@@ -62,9 +64,6 @@ const Status = {
   Request: 1,
 }
 
-// Global constants
-const PORTNUMBER = 3000;
-
 // Entry point
 function main() {
   // Setup
@@ -106,9 +105,13 @@ function main() {
   }
 }
 
+// Function definitions
+
 // Audio
+
 function audioProcess()
 {
+  // TODO: This is stupid move audio.js here or properly import it
   // Connect to speech processor
   var socket = require('socket.io-client')('http://localhost:3001');
   socket.on('connect', function(){});

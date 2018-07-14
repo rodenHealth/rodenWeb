@@ -104,7 +104,7 @@ export default class datavis extends Component {
     this.setState({ frames });
   }
 
-
+  // TODO: Ben "normalized" this, we need to verify
   render() {
     console.log(`TEST: ${this.state.currentRecord}`);
     // console.log(JSON.stringify(this.state.data));
@@ -140,6 +140,10 @@ export default class datavis extends Component {
             return (val / 1000) < 0.09 ? val : 0.09;
           })}
         />
+        <div className="wordSpace">
+          Words will be here and we will do things to them
+        </div>
+
         <center>
           {/* --- making sure this worked --- */}
           <h6>Anger: {this.state.anger[this.state.currentRecord]}</h6>
