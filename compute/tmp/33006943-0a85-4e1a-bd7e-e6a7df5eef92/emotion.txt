@@ -1,2 +1,0 @@
-{"frameB":{"emotion":{"anger":0.00009567919,"contempt":0.0008180009,"disgust":0.0000557123967,"fear":0.00000708006473,"happiness":0.000004801845,"neutral":0.993711531,"sadness":0.00172831584,"surprise":0.00357888313},"faceRect":{"height":180,"left":271,"top":166,"width":180}}}
-{"frameC":{"emotion":{"anger":0.0001780684,"contempt":0.000683695253,"disgust":0.0000706403443,"fear":0.000008123365,"happiness":0.000003863305,"neutral":0.9946698,"sadness":0.00207448658,"surprise":0.0023113545},"faceRect":{"height":181,"left":271,"top":165,"width":181}}}
