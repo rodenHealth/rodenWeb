@@ -37,6 +37,7 @@ export default class datavis extends Component {
       neutral: [],
       sadness: [],
       surprise: [],
+      speech: '',
       currentRecord: 0,
     };
   }
@@ -46,9 +47,9 @@ export default class datavis extends Component {
 
     firebasedb.handleDataForRecord(this.props.match.params.id, (key, snapshot) => {
       this.setState({ video: snapshot.val() });
-      // debugger; // eslint-disable-line
       this.getFrameData();
       this.getEmotionData();
+      this.getSpeechData();
     });
 
     // const videoRef = firebase.database().ref(`videos/${this.props.match.params.id}`);
@@ -58,6 +59,14 @@ export default class datavis extends Component {
     //
     //   // debugger; // eslint-disable-line
     // });
+  }
+
+  getSpeechData() {
+    const speech = this.state.video.speech;
+
+    this.setState({
+      speech,
+    });
   }
 
   getEmotionData() {
@@ -71,7 +80,9 @@ export default class datavis extends Component {
     const sadness = [];
     const surprise = [];
 
+
     for (const key in video) {
+      // debugger // eslint-disable-line
       if (video[key]) {
         if (video[key].emotion) {
           anger.push(video[key].emotion.anger * 1000);
@@ -131,7 +142,7 @@ export default class datavis extends Component {
             return (val / 1000) < 0.09 ? val : 0.09;
           })}
           neutral={this.state.neutral.map((val) => {
-            return (val / 1000) / 18;
+            return (val / 1000) / 1000;
           })}
           sadness={this.state.sadness.map((val) => {
             return (val / 1000) < 0.09 ? val : 0.09;
@@ -140,9 +151,12 @@ export default class datavis extends Component {
             return (val / 1000) < 0.09 ? val : 0.09;
           })}
         />
-        <div className="wordSpace">
-          Words will be here and we will do things to them
-        </div>
+        <center>
+          <div className="wordSpace">
+            <div className="title">speech analysis</div>
+            <div className="speech">{this.state.speech}</div>
+          </div>
+        </center>
 
         <center>
           {/* --- making sure this worked --- */}
@@ -151,7 +165,7 @@ export default class datavis extends Component {
           <h6>Disgust: {this.state.disgust[this.state.currentRecord]}</h6>
           <h6>Fear: {this.state.fear[this.state.currentRecord]}</h6>
           <h6>Happiness: {this.state.happiness[this.state.currentRecord]}</h6>
-          <h6>Neutral: {this.state.neutral[this.state.currentRecord]}</h6>
+          <h6>Neutral: {this.state.neutral[this.state.currentRecord] / 1000}</h6>
           <h6>Sadness: {this.state.sadness[this.state.currentRecord]}</h6>
           <h6>Surprise: {this.state.surprise[this.state.currentRecord]}</h6>
         </center>

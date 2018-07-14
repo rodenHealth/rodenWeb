@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom';
 import webcam from './components/webcam';
@@ -16,17 +16,28 @@ const Nav = (props) => {
 };
 
 // Main app
-const App = (props) => {
-  return (
-    <Router>
-      <div>
-        <Nav />
-        <Route exact path="/" component={webcam} />
-        <Route exact path="/:id" component={datavis} />
-      </div>
-    </Router>
-  );
-};
+export default class App extends Component {
+  constructor(props) {
+    super(props);
+  }
+  componentDidMount() {
+    // const videoRef = this.firebaseApp.database().ref('videos');
+    document.title = 'Roden Test Bench';
+  }
+
+  render() {
+    return (
+      <Router>
+        <div>
+          <Nav />
+          <Route exact path="/" component={webcam} />
+          <Route exact path="/:id" component={datavis} />
+        </div>
+      </Router>
+    );
+  }
+}
+
 
 ReactDOM.render(
   <App />
